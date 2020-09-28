@@ -72,7 +72,7 @@ refresh_pattern ^ftp: 1440 20% 10080
 refresh_pattern ^gopher: 1440 0% 1440
 refresh_pattern -i (/cgi-bin/|\?) 0 0% 0
 refresh_pattern . 0 20% 4320
-visible_hostname Fahmy
+visible_hostname MF-Project
 END
 sed -i $MYIP2 /etc/squid/squid.conf;
 
@@ -154,12 +154,14 @@ verb 3
 ncp-disable
 cipher none
 auth none
+
 END
 systemctl start openvpn@server
 #Create OpenVPN Config
 mkdir -p /home/vps/public_html
 cat > /home/vps/public_html/client.ovpn <<-END
-# Created by Fahmy Mys
+
+# Created by MF Project
 auth-user-pass
 client
 dev tun
@@ -194,7 +196,8 @@ cat /etc/openvpn/ca.crt >> /home/vps/public_html/client.ovpn
 echo '</ca>' >> /home/vps/public_html/client.ovpn
 
 cat > /home/vps/public_html/OpenVPN-Stunnel.ovpn <<-END
-# Created by MF Team
+
+# Created by MF Project
 auth-user-pass
 client
 dev tun
@@ -224,8 +227,10 @@ cat /etc/openvpn/ca.crt >> /home/vps/public_html/OpenVPN-Stunnel.ovpn
 echo '</ca>' >> /home/vps/public_html/OpenVPN-Stunnel.ovpn
 
 cat > /home/vps/public_html/stunnel.conf <<-END
+
 client = yes
 debug = 6
+
 [openvpn]
 accept = 127.0.0.1:1147
 connect = $MYIP:587
@@ -238,19 +243,23 @@ END
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 -subj '/CN=127.0.0.1/O=localhost/C=PH' -keyout /etc/stunnel/stunnel.pem -out /etc/stunnel/stunnel.pem
 cat > /etc/stunnel/stunnel.conf <<-END
+
 sslVersion = all
 pid = /stunnel.pid
 socket = l:TCP_NODELAY=1
 socket = r:TCP_NODELAY=1
 client = no
+
 [openvpn]
 accept = 587
 connect = 127.0.0.1:1147
 cert = /etc/stunnel/stunnel.pem
+
 [dropbear]
 accept = 443
 connect = 127.0.0.1:442
 cert = /etc/stunnel/stunnel.pem
+
 END
 
 #Setting UFW
@@ -320,6 +329,7 @@ cp /var/www/html/index.nginx-debian.html /home/vps/public_html/index.html
 # Create and Configure rc.local
 cat > /etc/rc.local <<-END
 #!/bin/sh -e
+
 exit 0
 END
 chmod +x /etc/rc.local
@@ -369,7 +379,7 @@ echo "PLEASE WAIT PATIENTLY AND RELOGIN TO YOUR VPS"
 echo " "
 echo "--------------------------- Configuration Setup Server -------------------------"
 echo "                         Copyright HostingTermurah.net                          "
-echo "                                Modified by Fahmy                         "
+echo "                                Modified by MF Team                        "
 echo "--------------------------------------------------------------------------------"
 echo ""  | tee -a log-install.txt
 echo "Server Information"  | tee -a log-install.txt
@@ -398,7 +408,7 @@ echo "   - Installation Log        : cat /root/log-install.txt"  | tee -a log-in
 echo ""  | tee -a log-install.txt
 echo "   - Webmin                  : http://$MYIP:10000/"  | tee -a log-install.txt
 echo ""
-echo "------------------------------ Modified by Fahmy -------------------------------"
+echo "------------------------------ Modified by MF Team -----------------------------"
 echo "-----Rebooting your VPS -----"
 sleep 5
 reboot
